@@ -18,19 +18,15 @@
 #include"coursework.h"
 
 
-#include<stdio.h>
-#include<stdlib.h>
-#include"linkedlist.h"
-#include"coursework.h"
-
-
 int main() {
 	// defining Variables
 	int i, a;
 
 	//start linked list
-	struct node *start;
+    struct node *head = NULL;
+    struct node *current = NULL;
     struct node *tail = NULL;
+
 
  //Creating 10 Processes by calling generateProcess
     struct process * myProcessPtr;
@@ -39,12 +35,12 @@ int main() {
 
         myProcessPtr = generateProcess();
         //insertFirst(a,myProcessPtr);
-        insertByBurstTime(a, start, myProcessPtr, tail);
-        printList();
+        insertByBurstTime(a, head, myProcessPtr, tail);
+        printList(head);
 
     }
 
-    printList();
+   
     //for (every item in list) or while (list is not empty)
         //while (myProcessPtr->iState == NEW)
             //void simulateSJFProcess(struct process * oTemp, struct timeval * oStartTime, struct timeval * oEndTime);

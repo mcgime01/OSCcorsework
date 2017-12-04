@@ -16,8 +16,8 @@ struct node *tail = NULL;
 
 
 //display the list
-void printList() {
-	struct node *ptr = head;
+void printList(struct node *ptr) {
+
 	printf("[ ");
 
 	//start from the beginning

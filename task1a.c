@@ -18,6 +18,12 @@
 #include"coursework.h"
 
 
+#include<stdio.h>
+#include<stdlib.h>
+#include"linkedlist.h"
+#include"coursework.h"
+
+
 int main() {
 	// defining Variables
 	int i, a;
@@ -34,7 +40,7 @@ int main() {
         myProcessPtr = generateProcess();
         //insertFirst(a,myProcessPtr);
         insertByBurstTime(a, start, myProcessPtr, tail);
-
+        printList();
 
     }
 

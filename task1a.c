@@ -35,10 +35,10 @@ int main() {
 
         myProcessPtr = generateProcess();
         //insertFirst(a,myProcessPtr);
-        insertByBurstTime(a, head, myProcessPtr, tail);
+        insertByBurstTime(a, &head, myProcessPtr, tail);
         printList(head);
-
     }
+
 
    
     //for (every item in list) or while (list is not empty)

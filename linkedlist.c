@@ -5,17 +5,17 @@
 #include "linkedlist.h"
 #include "coursework.h"
 
-//struct node {
-//struct process * data;
-//int key;
-//struct node * next;
+struct process * data;
+int key;
+struct node * next;
+struct node * previous;
 
-struct node *head = NULL;
-struct node *current = NULL;
-struct node *tail = NULL;
+// struct node *head = NULL;
+// struct node *current = NULL;
+// struct node *tail = NULL;
 
 
-//display the list
+/*//display the list
 void printList(struct node *ptr) {
 
 	printf("[ ");
@@ -31,29 +31,8 @@ void printList(struct node *ptr) {
 	}
 
 	printf(" ]\n");
-}
-
-/*struct process
-{
-	int iProcessId;
-	struct timeval oTimeCreated;
-	int iBurstTime;
-	struct process * oNext;
-	int iState;
-	int iEventType;
-};
-
-struct process * generateProcess()
-{
-	struct process * oTemp = (struct process *) malloc (sizeof(struct process));
-	oTemp->iProcessId = iPid++;
-	oTemp->iBurstTime = (rand() % MAX_BURST_TIME) + 1;
-	gettimeofday(&(oTemp->oTimeCreated), NULL);
-	oTemp->iState = NEW;
-	oTemp->iEventType = -1;
-	oTemp->oNext = NULL;
-	return oTemp;
 }*/
+
 
 void printProcess(struct process *process){
 	printf("{");
@@ -69,59 +48,72 @@ void printProcess(struct process *process){
 
 
 //insert process into linked list in order of burstTime
-void insertByBurstTime(int key, struct node **current_node, struct process *process_to_insert, struct node **tail) {
+void insertByBurstTime( struct node **current_node, struct process *process_to_insert, struct node **tail) {
     // head->
     // head-> (node1) <- tail
     // head-> (node1) -> (node2) <- tail
 
     // Handle an empty linked list
     if (*current_node == NULL) {
-		printf("print0\n");
        //creates link and add info
 		*current_node = (struct node*) malloc(sizeof(struct node));
 		(*current_node)->key = key;
 		(*current_node)->data = process_to_insert;
-        //link it to other nodes
+
+		//link it to other nodes
 		(*current_node)->next = NULL;
+		(*current_node)->previous = NULL; //setting previous
+
+
         printf("current_node was Null \n");
-        // return;
+
     } else if ((*current_node)->data->iBurstTime < process_to_insert->iBurstTime) {
 		printf("current_node<process_to_insert\n");
         // current_node isn't empty, current_node->iBurstTime is smaller than process_to_insert's
         // End of the list, insert after current_node
         if ((*current_node)->next == NULL) {
-			printf("current_node->next == NULL");
-            struct node *next_node = (struct node*) malloc(sizeof(struct node));
-			(*current_node)->key = key;
+            //creates node and adds data
+			struct node *next_node = (struct node*) malloc(sizeof(struct node));
+			next_node->key = key;
             next_node->data = process_to_insert;
+
+			//link it to other nodes
 			(*current_node)->next = next_node;
-            printf("current_node->next was null\n");
-            // return;
+			(*current_node)->previous = (*current_node); //setting previous
+            printf("current_node->next == null\n");
+
         } else {
 			printf("Recursing!\n");
             // there is something after current_node->next, recurse & check the next node:
             struct node *tail = NULL;
-            insertByBurstTime(key, &((*current_node)->next), process_to_insert, &tail);
+            insertByBurstTime( &((*current_node)->next), process_to_insert, &tail);
             printf("current_node->nest was not empty\n");
         }
     } else {
 		printf("current_node > process_to_insert\n");
         // current_node isn't empty, current_node->iBurstTime is larger than process_to_insert's
-        struct node *insert_me = (struct node*) malloc(sizeof(struct node));
+        //creates node and inserts data
+		struct node *insert_me = (struct node*) malloc(sizeof(struct node));
         insert_me->key = key;
         insert_me->data = process_to_insert;
 
         // head -> next
         // head -> insert_me -> next
         // Break apart & re-link the linked list
-        struct node *next = (*current_node)->next;
-		(*current_node)->next = insert_me;
-        insert_me->next = next;
+
+		insert_me->previous = (*current_node)->previous;
+		(*current_node)->previous = insert_me;
+
+		//links to other nodes
+		//struct node *next = (*current_node)->next;
+		//(*current_node)->previous = insert_me;
+        //insert_me->next = next;
+
         printf("just a normal insert was done\n");
     }
 }
 
-
+/*
 //insert link at the first location
 void insertFirst(int key, struct process *data) {
 	//create a link
@@ -242,7 +234,7 @@ struct node* delete(int key) {
 	return current;
 }
 
-/*void sort() {
+void sort() {
 
 	int i, j, k, tempKey, tempData;
 	struct node *current;
@@ -271,7 +263,7 @@ struct node* delete(int key) {
 			next = next->next;
 		}
 	}
-}*/
+}
 
 void reverse(struct node** head_ref) {
 	struct node* prev   = NULL;
@@ -288,3 +280,4 @@ void reverse(struct node** head_ref) {
 	*head_ref = prev;
 }
 
+*/

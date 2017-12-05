@@ -34,38 +34,35 @@ void printList(struct node *ptr) {
 }
 
 //insert process into linked list in order of burstTime
-void insertByBurstTime(int key, struct node *current_node, struct process *process_to_insert, struct node *tail) {
+void insertByBurstTime(int key, struct node **current_node, struct process *process_to_insert, struct node *tail) {
     // head->
     // head-> (node1) <- tail
     // head-> (node1) -> (node2) <- tail
 
     // Handle an empty linked list
-    if (current_node == NULL) {
+    if (*current_node == NULL) {
        //creates link and add info
-        current_node = (struct node*) malloc(sizeof(struct node));
-        current_node->key = key;
-        current_node->data = process_to_insert;
+		*current_node = (struct node*) malloc(sizeof(struct node));
+		(*current_node)->key = key;
+		(*current_node)->data = process_to_insert;
         //link it to other nodes
-        current_node->next = NULL;
-        head = current_node;
-        //tail = current_node
+		(*current_node)->next = NULL;
         printf("current_node was Null \n");
         return;
-    } else if (current_node->data->iBurstTime < process_to_insert->iBurstTime) {
+    } else if ((*current_node)->data->iBurstTime < process_to_insert->iBurstTime) {
         // current_node isn't empty, current_node->iBurstTime is smaller than process_to_insert's
         // End of the list, insert after current_node
-        if (current_node->next == NULL) {
+        if ((*current_node)->next == NULL) {
             struct node *next_node = (struct node*) malloc(sizeof(struct node));
-            current_node->key = key;
+			(*current_node)->key = key;
             next_node->data = process_to_insert;
-            current_node->next = next_node;
-            tail = current_node;
+			(*current_node)->next = next_node;
             printf("current_node->next was null");
             return;
         } else {
             // there is something after current_node->next, recurse:
             struct node *tail = NULL;
-            insertByBurstTime(key, current_node->next, process_to_insert, tail);
+            insertByBurstTime(key, &(*current_node)->next, process_to_insert, tail);
             printf("current_node->nest was not empty");
         }
     } else {
@@ -77,12 +74,13 @@ void insertByBurstTime(int key, struct node *current_node, struct process *proce
         // head -> next
         // head -> insert_me -> next
         // Break apart & re-link the linked list
-        struct node *next = current_node->next;
-        current_node->next = insert_me;
+        struct node *next = (*current_node)->next;
+		(*current_node)->next = insert_me;
         insert_me->next = next;
         printf("just a normal insert was done");
     }
 }
+
 
 //insert link at the first location
 void insertFirst(int key, struct process *data) {

@@ -32,22 +32,27 @@ int main() {
  //Creating 10 Processes by calling generateProcess
     for( a = 0; a < 10; a = a + 1 ) {
         myProcessPtr = generateProcess();
-        printProcess(myProcessPtr);
         insertByBurstTime(a, &head, myProcessPtr, &tail);
-        printList(head);
     }
+    printList(head);
+
 
     struct node *currentProcessPtr = head;
 
-    while (currentProcessPtr != NULL) {
+    while (currentProcessPtr != NULL) { //stop if list is empty
 
-        while (myProcessPtr->iState == 1) {
-            printf("getting ready to run SJF");
+        //while (myProcessPtr->iState == 1) {  //skip node if already run and istate changed
+            printf("getting ready to run SJF\n");
             simulateSJFProcess(myProcessPtr, StartTime, EndTime);
-            currentProcessPtr->next = currentProcessPtr;
-        }
-    }
+            if (myProcessPtr->iState == FINISHED) {
+                deleteNode(&head, currentProcessPtr);
+                currentProcessPtr->next = currentProcessPtr;
+            }
+        //}
 
+    //printList(head);
+
+    }
 
             //and write output to file
 

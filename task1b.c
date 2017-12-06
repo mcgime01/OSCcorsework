@@ -10,6 +10,7 @@
 //calculate avrage response time and and turnaround time 
 //print to output to file
 
+
 #include<stdio.h>
 #include<stdlib.h>
 #include"linkedlist.h"
@@ -27,11 +28,22 @@ int main() {
     struct timeval *EndTime;
     struct process *myProcessPtr;
 
-    //Creating 10 Processes by calling generateProcess
+    //Creating 10 Processes by calling generateProcess and entering them in to the back of the linked list.
     for (a = 0; a < 10; a = a + 1) {
         myProcessPtr = generateProcess();
         printProcess(myProcessPtr);
         insertLast(a, &head, myProcessPtr);
-        printList();
     }
-}
+    printList(head);
+
+
+   while (head != NULL) {
+        simulateRoundRobinProcess(myProcessPtr, StartTime, EndTime);
+        head = tail;
+        head->next = head;
+    }
+
+    //RoundRobin
+
+
+

@@ -103,7 +103,10 @@ void insertLast(int key, struct node **current_node, struct process *process_to_
 		(*current_node)->next = NULL;
 		(*current_node)->previous = NULL;
 
-	} else {
+	} else if ((*current_node)->next != NULL) {
+		insertLast(key, &((*current_node)->next), process_to_insert);
+
+	}else {
 		struct node *insert_me = (struct node *) malloc(sizeof(struct node));
 		insert_me->key = key;
 		insert_me->data = process_to_insert;

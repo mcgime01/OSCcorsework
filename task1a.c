@@ -1,17 +1,3 @@
-/**************************************************************
- * Program implementing SJF algorithm
- * Coarse work: Task 1 for Operating Systems and Concerency
- * Fall 2017
- * by Meghan McGinnis
- **************************************************************/
-//implement SJF algorithm
-
-//calculate average response and turnaround time
-
-//write process info to file as it is executed.
-//use of Dynamic Memory
-
-
 #include<stdio.h>
 #include<stdlib.h>
 #include"linkedlist.h"
@@ -37,7 +23,8 @@ int main() {
     printList(head);
 
 
-    struct node *currentProcessPtr = head;
+    struct node *currentProcessPtr = NULL;
+    currentProcessPtr = head;
 
     while (currentProcessPtr != NULL) { //stop if list is empty
 

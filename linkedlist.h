@@ -22,6 +22,10 @@ void insertByBurstTime(int key, struct node **current_node, struct process *proc
 void insertFirst(int key, struct process *data);
 //insert link at end of list
 void insertLast(int key, struct node **current_node, struct process *process_to_insert);
+//Function to delete a node in a Doubly Linked List.
+    //head_ref --> pointer to head node pointer.
+    //del --> pointer to node to be deleted.
+void deleteNode(struct node **head_ref, struct node *del);
 //delete first item
 struct node* deleteFirst();
 // length of List

@@ -22,33 +22,34 @@ int main() {
 	// defining Variables
 	int i, a;
 
-	//start linked list
     struct node *head = NULL;
     struct node *current = NULL;
     struct node *tail = NULL;
-
-
- //Creating 10 Processes by calling generateProcess
+    struct timeval * StartTime;
+    struct timeval * EndTime;
     struct process * myProcessPtr;
 
-    for( a = 0; a < 9; a = a + 1 ) {
-
+ //Creating 10 Processes by calling generateProcess
+    for( a = 0; a < 10; a = a + 1 ) {
         myProcessPtr = generateProcess();
-        //insertFirst(a,myProcessPtr);
-        insertByBurstTime(a, &head, myProcessPtr, tail);
-        printList(head);
+        insertByBurstTime(a, &head, myProcessPtr, &tail);
+    }
+    printList(head);
+   
+    while (head != NULL) {
+        printf(" head is still going strong");
+        while (myProcessPtr->iState == 1) {
+            printf("getting ready to run SJF");
+            simulateSJFProcess(myProcessPtr, StartTime, EndTime);
+            printf("finished SJF");
+        }
     }
 
-
-   
-    //for (every item in list) or while (list is not empty)
-        //while (myProcessPtr->iState == NEW)
-            //void simulateSJFProcess(struct process * oTemp, struct timeval * oStartTime, struct timeval * oEndTime);
             //and write output to file
 
 
 
-    //write to file
+    /*//write to file
     FILE *f = fopen("task1a.txt", "w");
     if (f == NULL) {
 	    printf("Error opening file!\n");
@@ -67,5 +68,5 @@ int main() {
     char c = 'A';
     fprintf(f, "A character: %c\n", c);
 
-    fclose(f);
+    fclose(f);*/
 }

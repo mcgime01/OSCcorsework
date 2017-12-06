@@ -45,14 +45,14 @@ void insertByBurstTime(int key, struct node **current_node, struct process *proc
         // End of the list, insert after current_node
         if ((*current_node)->next == NULL) {
             //creates node and adds data
-			struct node *next_node = (struct node*) malloc(sizeof(struct node));
-			next_node->key = key;
-            next_node->data = process_to_insert;
+			struct node *insert_me = (struct node*) malloc(sizeof(struct node));
+			insert_me->key = key;
+            insert_me->data = process_to_insert;
 
 			//link it to other nodes
-			(*current_node)->next = next_node;
-			next_node->previous = (*current_node);
-			next_node->next = NULL;
+			(*current_node)->next = insert_me;
+			insert_me->previous = (*current_node);
+			insert_me->next = NULL;
 
         } else {
             // there is something after current_node->next, recurse & check the next node:
@@ -68,9 +68,10 @@ void insertByBurstTime(int key, struct node **current_node, struct process *proc
 
         // Break apart & re-link the linked list
 		insert_me->next = (*current_node);
+		(*current_node)->previous = insert_me;
+
 		insert_me->previous = (*current_node)->previous;
 		(*current_node)->previous->next = insert_me;
-		(*current_node)->previous = insert_me;
 	}
 }
 
@@ -117,6 +118,32 @@ void insertLast(int key, struct node **current_node, struct process *process_to_
 		insert_me->next = NULL;
 		insert_me->previous = (*current_node);
 	}
+}
+
+//delete a link with given key
+/* Function to delete a node in a Doubly Linked List.
+head_ref --> pointer to head node pointer.
+del --> pointer to node to be deleted. */
+void deleteNode(struct node **head_ref, struct node *del) {
+/* base case */
+	if(*head_ref == NULL || del == NULL)
+		return;
+
+/* If node to be deleted is head node */
+	if(*head_ref == del)
+		*head_ref = del->next;
+
+/* Change next only if node to be deleted is NOT the last node */
+	if(del->next != NULL)
+		del->next->previous = del->previous;
+
+/* Change previous only if node to be deleted is NOT the first node */
+	if(del->previous != NULL)
+		del->previous->next = del->next;
+
+/* Finally, free the memory occupied by del*/
+	free(del);
+	return;
 }
 
 
@@ -190,43 +217,7 @@ struct node* find(int key) {
 	return current;
 }
 
-//delete a link with given key
-struct node* delete(int key) {
 
-	//start from the first link
-	struct node* current = head;
-	struct node* previous = NULL;
-
-	//if list is empty
-	if(head == NULL) {
-		return NULL;
-	}
-
-	//navigate through list
-	while(current->key != key) {
-
-		//if it is last node
-		if(current->next == NULL) {
-			return NULL;
-		} else {
-			//store reference to current link
-			previous = current;
-			//move to next link
-			current = current->next;
-		}
-	}
-
-	//found a match, update the link
-	if(current == head) {
-		//change first to point to next link
-		head = head->next;
-	} else {
-		//bypass the current link
-		previous->next = current->next;
-	}
-
-	return current;
-}
 
 void sort() {
 

@@ -25,25 +25,29 @@ int main() {
     struct node *head = NULL;
     struct node *current = NULL;
     struct node *tail = NULL;
-    struct timeval * StartTime;
-    struct timeval * EndTime;
+    struct timeval * StartTime = (struct timeval*) malloc(sizeof(struct timeval));
+    struct timeval * EndTime = (struct timeval*) malloc(sizeof(struct timeval));
     struct process * myProcessPtr;
 
  //Creating 10 Processes by calling generateProcess
     for( a = 0; a < 10; a = a + 1 ) {
         myProcessPtr = generateProcess();
+        printProcess(myProcessPtr);
         insertByBurstTime(a, &head, myProcessPtr, &tail);
+        printList(head);
     }
-    printList(head);
-   
-    while (head != NULL) {
-        printf(" head is still going strong");
+
+    struct node *currentProcessPtr = head;
+
+    while (currentProcessPtr != NULL) {
+
         while (myProcessPtr->iState == 1) {
             printf("getting ready to run SJF");
             simulateSJFProcess(myProcessPtr, StartTime, EndTime);
-            printf("finished SJF");
+            currentProcessPtr->next = currentProcessPtr;
         }
     }
+
 
             //and write output to file
 

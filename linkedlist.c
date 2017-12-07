@@ -39,6 +39,7 @@ void insertByBurstTime(int key, struct node **current_node, struct process *proc
 		//link it to other nodes
 		(*current_node)->next = NULL;
 		(*current_node)->previous = NULL;
+        printf("insert option 1\n");
 
     } else if ((*current_node)->data->iBurstTime < process_to_insert->iBurstTime) {
         // current_node isn't empty, current_node->iBurstTime is smaller than process_to_insert's
@@ -54,6 +55,8 @@ void insertByBurstTime(int key, struct node **current_node, struct process *proc
 			insert_me->previous = (*current_node);
 			insert_me->next = NULL;
 
+            printf("insert option 2\n");
+
         } else {
             // there is something after current_node->next, recurse & check the next node:
             struct node *tail = NULL;
@@ -67,14 +70,24 @@ void insertByBurstTime(int key, struct node **current_node, struct process *proc
         insert_me->data = process_to_insert;
 
         // Break apart & re-link the linked list
-		insert_me->next = (*current_node);
-		(*current_node)->previous = insert_me;
 
-		insert_me->previous = (*current_node)->previous;
-		(*current_node)->previous->next = insert_me;
+
+        (*current_node)->previous->next = insert_me;
+        insert_me->next = (*current_node);
+
+        insert_me->previous = (*current_node)->previous;
+        (*current_node)->previous = insert_me;
+
+        //this was the order that got rid of the infinite loop
+        //insert_me->next = (*current_node);
+        //(*current_node)->previous = insert_me;
+
+        //insert_me->previous = (*current_node)->previous;
+        //(*current_node)->previous->next = insert_me;
+        
+        printf("insert option 3\n");
 	}
 }
-
 
 /*//insert link at the first location
 void insertFirst(int key, struct process *data) {

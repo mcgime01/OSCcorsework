@@ -8,17 +8,12 @@ struct node {
   struct node *previous;
 };
 
-// struct node *head;
-// struct node *current;
-// struct node *tail;
-
 // display the list
 void printList();
 // print processes data for debug
 void printProcess(struct process *process);
-// creates and inserts new node in list by order of burstTime
-void insertByBurstTime(int key, struct node **current_node,
-                       struct process *process_to_insert, struct node **tail);
+// creates and inserts new node in list by order of burstTime. Returns head ptr.
+struct node *insertByBurstTime(struct node *, struct process *, int key);
 // insert link at the first location
 void insertFirst(int key, struct process *data);
 // insert link at end of list

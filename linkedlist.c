@@ -27,86 +27,72 @@ void printProcess(struct process *process) {
   printf("}\n");
 }
 
-// insert process into linked list in order of burstTime
-void insertByBurstTime(int key, struct node **current_node,
-                       struct process *process_to_insert, struct node **tail) {
-  // Handle an empty linked list
-  if (*current_node == NULL) {
-    // creates link and add info
-    *current_node = (struct node *)malloc(sizeof(struct node));
-    (*current_node)->key = key;
-    (*current_node)->data = process_to_insert;
+// Function to insert the given data and return a pointer to the head node.
+struct node *insertByBurstTime(struct node *head, struct process *data,
+                               int key) {
+  // reserve memory for the newNode & set the data
+  struct node *newNode = (struct node *)malloc(sizeof(struct node));
+  newNode->data = data;
+  newNode->key = key;  // This is redundant btw. data->iProcessId will also give
+                       // you the index.
 
-    // link it to other nodes
-    (*current_node)->next = NULL;
-    (*current_node)->previous = NULL;
-    printf("insert option 1\n");
-
-  } else if ((*current_node)->data->iBurstTime <
-             process_to_insert->iBurstTime) {
-    // current_node isn't empty, current_node->iBurstTime is smaller than
-    // process_to_insert's End of the list, insert after current_node
-    if ((*current_node)->next == NULL) {
-      // creates node and adds data
-      struct node *insert_me = (struct node *)malloc(sizeof(struct node));
-      insert_me->key = key;
-      insert_me->data = process_to_insert;
-
-      // link it to other nodes
-      (*current_node)->next = insert_me;
-      insert_me->previous = (*current_node);
-      insert_me->next = NULL;
-
-      printf("insert option 2\n");
-
-    } else {
-      // there is something after current_node->next, recurse & check the next
-      // node:
-      struct node *tail = NULL;
-      insertByBurstTime(key, &((*current_node)->next), process_to_insert,
-                        &tail);
-    }
-  } else {
-    // current_node isn't empty, current_node->iBurstTime is larger than
-    // process_to_insert's
-    // creates node and inserts data
-    struct node *insert_me = (struct node *)malloc(sizeof(struct node));
-    insert_me->key = key;
-    insert_me->data = process_to_insert;
-
-    // Break apart & re-link the linked list
-
-    (*current_node)->previous->next = insert_me;
-    insert_me->next = (*current_node);
-
-    insert_me->previous = (*current_node)->previous;
-    (*current_node)->previous = insert_me;
-
-    // this was the order that got rid of the infinite loop
-    // insert_me->next = (*current_node);
-    //(*current_node)->previous = insert_me;
-
-    // insert_me->previous = (*current_node)->previous;
-    //(*current_node)->previous->next = insert_me;
-
-    printf("insert option 3\n");
+  // Special case - the list is empty
+  if (head == NULL) {
+    newNode->next = NULL;  // Set next and previous pointers to NULL
+    newNode->previous = NULL;
+    // This node is the only node so return it as the head node.
+    return newNode;
   }
+
+  if (head->data->iBurstTime >= newNode->data->iBurstTime) {
+    // If the node's needs to be inserted at the beginning of the list set the
+    // next pointer of the newNode to point to the current head and set the
+    // previous pointer to NULL. (It's now the beginning of the list)
+    newNode->next = head;
+    newNode->previous = NULL;
+    // Update head's previous pointer to point to newNode
+    head->previous = newNode;
+    // Since it's at the front, this node now becomes the head node
+    head = newNode;
+  } else {
+    // Figure out where to insert the new node using a temporary current node
+    struct node *current = head;
+    while (current->next != NULL &&
+           current->next->data->iBurstTime < newNode->data->iBurstTime) {
+      current = current->next;
+    }
+    // newNode lies between current and current->next
+    newNode->previous = current;
+    newNode->next = current->next;
+    // It might happen that newNode's position is at the end.
+    // In that case we cannot update the current->next's (which is NULL)
+    // previous pointer
+    if (current->next != NULL) {
+      current->next->previous = newNode;
+    }
+    // Update the next pointer of current to point to this new node.
+    current->next = newNode;
+  }
+  // Finally return the head pointer.
+  return head;
 }
 
-/*//insert link at the first location
+/*
+// insert link at the first location
 void insertFirst(int key, struct process *data) {
-        //create a link
-        struct node *link = (struct node*) malloc(sizeof(struct node));
+  // create a link
+  struct node *link = (struct node *)malloc(sizeof(struct node));
 
-        link->key = key;
-        link->data = data;
+  link->key = key;
+  link->data = data;
 
-        //point it to old first node
-        link->next = head;
+  // point it to old first node
+  link->next = head;
 
-        //point first to new first node
-        head = link;
-}*/
+  // point first to new first node
+  head = link;
+}
+*/
 
 // insert link at the last location
 void insertLast(int key, struct node **current_node,
@@ -142,19 +128,19 @@ void insertLast(int key, struct node **current_node,
 head_ref --> pointer to head node pointer.
 del --> pointer to node to be deleted. */
 void deleteNode(struct node **head_ref, struct node *del) {
-  /* base case */
+  // base case 
   if (*head_ref == NULL || del == NULL) return;
 
-  /* If node to be deleted is head node */
+  // If node to be deleted is head node 
   if (*head_ref == del) *head_ref = del->next;
 
-  /* Change next only if node to be deleted is NOT the last node */
+  // Change next only if node to be deleted is NOT the last node 
   if (del->next != NULL) del->next->previous = del->previous;
 
-  /* Change previous only if node to be deleted is NOT the first node */
+  // Change previous only if node to be deleted is NOT the first node 
   if (del->previous != NULL) del->previous->next = del->next;
 
-  /* Finally, free the memory occupied by del*/
+  // Finally, free the memory occupied by del
   free(del);
   return;
 }

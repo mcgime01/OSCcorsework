@@ -5,8 +5,6 @@
 
 int main() {
   // defining Variables
-  int i, a;
-
   struct node *head = NULL;
   struct node *current = NULL;
   struct node *tail = NULL;
@@ -15,9 +13,9 @@ int main() {
   struct process *myProcessPtr;
 
   // Creating 10 Processes by calling generateProcess
-  for (a = 0; a < 10; a = a + 1) {
+  for (int i = 0; i < 10; i++) {
     myProcessPtr = generateProcess();
-    insertByBurstTime(a, &head, myProcessPtr, &tail);
+    head = insertByBurstTime(head, myProcessPtr, i);
   }
   printList(head);
 
@@ -28,15 +26,25 @@ int main() {
 
     // while (myProcessPtr->iState == 1) {  //skip node if already run and
     // istate changed
-    printf("getting ready to run SJF\n");
-    simulateSJFProcess(myProcessPtr, StartTime, EndTime);
-    if (myProcessPtr->iState == FINISHED) {
-      deleteNode(&head, currentProcessPtr);
-      currentProcessPtr->next = currentProcessPtr;
-    }
-    //}
+    printf("Getting ready to run SJF for process: %d\n",
+           currentProcessPtr->data->iProcessId);
+    simulateSJFProcess(currentProcessPtr->data, StartTime, EndTime);
+    if (currentProcessPtr->data->iState == FINISHED) {
+      printf(
+          " -- Process: %d (index %d) finished. Creation time: %d, StartTime: "
+          "%d, EndTime, %d\n",
+          currentProcessPtr->data->iProcessId, currentProcessPtr->key,
+          currentProcessPtr->data->oTimeCreated, *StartTime, *EndTime);
 
-    // printList(head);
+      if (currentProcessPtr->next != NULL) {
+        currentProcessPtr = currentProcessPtr->next;
+        deleteNode(&head, currentProcessPtr->previous);
+      } else {
+        struct node *tmp = currentProcessPtr;
+        currentProcessPtr = currentProcessPtr->next;
+        deleteNode(&head, tmp);
+      }
+    }
   }
 
   // and write output to file

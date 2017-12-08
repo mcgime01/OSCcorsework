@@ -36,6 +36,68 @@ cannot finish before the producer and consumer are both finished.
 #include "coursework.h"
 #include "linkedlist.h"
 
+int wait_protocol(int counter)
+{
+      return (--counter);
+}
+
+int signal_protocol(int counter)
+{
+      return(++counter);
+}
+
+void producer() {
+  while (Buffer != BUFFER_SIZE) {
+    printf("generating Processes\n" );
+    myProcessPtr = generateProcess();
+    head = insertByBurstTime(head, myProcessPtr, i);
+    Buffer++;
+    printf("%d\n", Buffer );
+  }
+}
+
+void consumer() {
+  struct node *currentProcessPtr = NULL;
+  currentProcessPtr = head;
+
+  while (currentProcessPtr != NULL) { // stop if list is empty
+    int BurstTime = currentProcessPtr->data->iBurstTime;
+    printf("simulateing sjf process \n");
+    simulateSJFProcess(currentProcessPtr->data, StartTime, EndTime);
+    if (currentProcessPtr->data->iState == FINISHED) {
+        //Calculate ResponseTime and TurnAroundTime
+        int ResponseTime = getDifferenceInMilliSeconds(currentProcessPtr->data->oTimeCreated, *StartTime);
+        int TurnAroundTime = getDifferenceInMilliSeconds(currentProcessPtr->data->oTimeCreated, *EndTime);
+
+        //print data to file
+        fprintf(f, "Process Id = %d, Previous Burst Time = %d, New Burst Time = %d, Response Time = %d, Turn Around Time = %d \n",
+        currentProcessPtr->data->iProcessId, BurstTime, currentProcessPtr->data->iBurstTime, ResponseTime, TurnAroundTime);
+
+        //to calculate Averages
+        n = n+1;
+        sumRT += num[n] = ResponseTime;
+        sumTAT += num[n] = TurnAroundTime;
+
+        // and get rid of run processes
+        if (currentProcessPtr->next != NULL) {
+          printf("deleteing nodes 1\n");
+          currentProcessPtr = currentProcessPtr->next;
+          deleteNode(&head, currentProcessPtr->previous);
+          Buffer = Buffer - 1;
+          printf("%d\n", Buffer );
+        } else{
+          printf("deleteing nodes 2\n");
+          struct node *tmp = currentProcessPtr;
+          currentProcessPtr = currentProcessPtr->next;
+          deleteNode(&head, tmp);
+          Buffer = Buffer - 1;
+          printf("%d\n", Buffer );
+        }
+    }
+  }
+}
+
+
 int main() {
   //defining Variables
   struct node *head = NULL;
@@ -44,10 +106,10 @@ int main() {
   struct timeval *StartTime = (struct timeval *)malloc(sizeof(struct timeval));
   struct timeval *EndTime = (struct timeval *)malloc(sizeof(struct timeval));
   struct process *myProcessPtr;
+  int temp = 0, overflow = 0, mutex = 1, underflow = 10;
   int i, Buffer = 0;
-  int n = 0, sumRT, sumTAT;
-  double num[10];
-  float averageRTinsec, averageTATinsec;
+  float averageRTinsec, averageTATinsec, n = 0, sumRT, sumTAT;
+
 
   FILE *f = fopen("task2.txt", "w");
   printf("file is open\n");
@@ -56,58 +118,16 @@ int main() {
     exit(1);
   }
 
+
   for (i = 0; i < 100; i++) {
     printf("in for loop\n");
+    producer();
 
-    while (Buffer != BUFFER_SIZE) {
-      printf("generating Processes\n" );
-      myProcessPtr = generateProcess();
-      head = insertByBurstTime(head, myProcessPtr, i);
-      Buffer++;
-      printf("%d\n", Buffer );
-    }
 
     // Running Processes through CPU
     while (Buffer != 0) {
       printf("in while loop\n");
-      struct node *currentProcessPtr = NULL;
-      currentProcessPtr = head;
-
-      while (currentProcessPtr != NULL) { // stop if list is empty
-        int BurstTime = currentProcessPtr->data->iBurstTime;
-        printf("simulateing sjf process \n");
-        simulateSJFProcess(currentProcessPtr->data, StartTime, EndTime);
-        if (currentProcessPtr->data->iState == FINISHED) {
-            //Calculate ResponseTime and TurnAroundTime
-            int ResponseTime = getDifferenceInMilliSeconds(currentProcessPtr->data->oTimeCreated, *StartTime);
-            int TurnAroundTime = getDifferenceInMilliSeconds(currentProcessPtr->data->oTimeCreated, *EndTime);
-
-            //print data to file
-            fprintf(f, "Process Id = %d, Previous Burst Time = %d, New Burst Time = %d, Response Time = %d, Turn Around Time = %d \n",
-            currentProcessPtr->data->iProcessId, BurstTime, currentProcessPtr->data->iBurstTime, ResponseTime, TurnAroundTime);
-
-            //to calculate Averages
-            n = n+1;
-            sumRT += num[n] = ResponseTime;
-            sumTAT += num[n] = TurnAroundTime;
-
-            // and get rid of run processes
-            if (currentProcessPtr->next != NULL) {
-              printf("deleteing nodes 1\n");
-              currentProcessPtr = currentProcessPtr->next;
-              deleteNode(&head, currentProcessPtr->previous);
-              Buffer = Buffer - 1;
-              printf("%d\n", Buffer );
-            } else{
-              printf("deleteing nodes 2\n");
-              struct node *tmp = currentProcessPtr;
-              currentProcessPtr = currentProcessPtr->next;
-              deleteNode(&head, tmp);
-              Buffer = Buffer - 1;
-              printf("%d\n", Buffer );
-            }
-        }
-      }
+      consumer();
     }
   }
   fclose(f);
@@ -146,4 +166,15 @@ procedure consumer() {
         consumeItem(item)
     }
 }
+
+
+
+//Calculateing and printing Averages
+ float averageRT = sumRT / n;
+ fprintf(f, "Average Response Time =\"%.6f\" \n", averageRT);
+
+ float averageTAT = sumTAT / n;
+ fprintf(f, "Average Turn Around Time =\"%.6f\" \n", averageTAT);
+
 */
+

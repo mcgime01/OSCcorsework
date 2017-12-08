@@ -49,27 +49,33 @@ int main() {
   double num[10];
   float averageRTinsec, averageTATinsec;
 
-  FILE *f = fopen("task1a.txt", "w");
+  FILE *f = fopen("task2.txt", "w");
+  printf("file is open\n");
   if (f == NULL) {
     printf("Error opening file!\n");
     exit(1);
   }
 
-  while (Buffer != BUFFER_SIZE) {
-    myProcessPtr = generateProcess();
-    head = insertByBurstTime(head, myProcessPtr, i);
-    Buffer++;
-  }
+  for (i = 0; i < 100; i++) {
+    printf("in for loop\n");
 
-  for (i = 0; i < 1000; i++) {
+    while (Buffer != BUFFER_SIZE) {
+      printf("generating Processes\n" );
+      myProcessPtr = generateProcess();
+      head = insertByBurstTime(head, myProcessPtr, i);
+      Buffer++;
+      printf("%d\n", Buffer );
+    }
 
     // Running Processes through CPU
     while (Buffer != 0) {
+      printf("in while loop\n");
       struct node *currentProcessPtr = NULL;
       currentProcessPtr = head;
 
       while (currentProcessPtr != NULL) { // stop if list is empty
         int BurstTime = currentProcessPtr->data->iBurstTime;
+        printf("simulateing sjf process \n");
         simulateSJFProcess(currentProcessPtr->data, StartTime, EndTime);
         if (currentProcessPtr->data->iState == FINISHED) {
             //Calculate ResponseTime and TurnAroundTime
@@ -86,21 +92,25 @@ int main() {
             sumTAT += num[n] = TurnAroundTime;
 
             // and get rid of run processes
-          if (currentProcessPtr->next != NULL) {
-            currentProcessPtr = currentProcessPtr->next;
-            deleteNode(&head, currentProcessPtr->previous);
-            Buffer = Buffer - 1;
-          } else{
-            struct node *tmp = currentProcessPtr;
-            currentProcessPtr = currentProcessPtr->next;
-            deleteNode(&head, tmp);
-            Buffer = Buffer - 1;
-          }
+            if (currentProcessPtr->next != NULL) {
+              printf("deleteing nodes 1\n");
+              currentProcessPtr = currentProcessPtr->next;
+              deleteNode(&head, currentProcessPtr->previous);
+              Buffer = Buffer - 1;
+              printf("%d\n", Buffer );
+            } else{
+              printf("deleteing nodes 2\n");
+              struct node *tmp = currentProcessPtr;
+              currentProcessPtr = currentProcessPtr->next;
+              deleteNode(&head, tmp);
+              Buffer = Buffer - 1;
+              printf("%d\n", Buffer );
+            }
         }
       }
     }
-    fclose(f);
   }
+  fclose(f);
 }
 /*
   3. Mutex

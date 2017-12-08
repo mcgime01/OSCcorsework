@@ -11,9 +11,8 @@ int main() {
   struct timeval *StartTime = (struct timeval *)malloc(sizeof(struct timeval));
   struct timeval *EndTime = (struct timeval *)malloc(sizeof(struct timeval));
   struct process *myProcessPtr;
-  int n, sumRT, sumTAT;
-  double num[10];
-  float averageRTinsec, averageTATinsec;
+  //int n = 0, sumRT, sumTAT;
+  float averageRTinsec, averageTATinsec, n = 0, sumRT, sumTAT;
 
   FILE *f = fopen("task1a.txt", "w");
   if (f == NULL) {
@@ -43,10 +42,10 @@ int main() {
         fprintf(f, "Process Id = %d, Previous Burst Time = %d, New Burst Time = %d, Response Time = %d, Turn Around Time = %d \n",
         currentProcessPtr->data->iProcessId, BurstTime, currentProcessPtr->data->iBurstTime, ResponseTime, TurnAroundTime);
 
-        //to calculate Averages
-        n++;
-        sumRT += num[n] = ResponseTime;
-        sumTAT += num[n] = TurnAroundTime;
+        //to data to calculate Averages
+        n = n+1;
+        sumRT +=  ResponseTime;
+        sumTAT += TurnAroundTime;
 
         // and get rid of run processes
       if (currentProcessPtr->next != NULL) {
@@ -60,20 +59,12 @@ int main() {
     }
   }
 
-    int averageRT = sumRT/n;
-    averageRTinsec = averageRT/1000;
-    printf("%d \n",n);
-    printf("%d \n", averageRT);
-    fprintf(f, "Average Response Time =\"%.6f\" \n", averageRTinsec);
+   //Calculateing and printing Averages
+    float averageRT = sumRT / n;
+    fprintf(f, "Average Response Time =\"%.6f\" \n", averageRT);
 
-    int averageTAT = sumTAT / n;
-    averageTATinsec = averageTAT/1000;
-    printf("%d \n",n);
-    printf("%d \n", averageTAT);
-
-
-    fprintf(f, "Average Turn Around Time =\"%.6f\" \n", averageTATinsec);
+    float averageTAT = sumTAT / n;
+    fprintf(f, "Average Turn Around Time =\"%.6f\" \n", averageTAT);
 
   fclose(f);
 }
-

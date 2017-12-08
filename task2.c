@@ -55,14 +55,13 @@ int main() {
     exit(1);
   }
 
+  while (Buffer != BUFFER_SIZE) {
+    myProcessPtr = generateProcess();
+    head = insertByBurstTime(head, myProcessPtr, i);
+    Buffer++;
+  }
 
   for (i = 0; i < 1000; i++) {
-
-    while (Buffer != BUFFER_SIZE) {
-      myProcessPtr = generateProcess();
-      head = insertByBurstTime(head, myProcessPtr, i);
-      Buffer++;
-    }
 
     // Running Processes through CPU
     while (Buffer != 0) {
@@ -90,10 +89,12 @@ int main() {
           if (currentProcessPtr->next != NULL) {
             currentProcessPtr = currentProcessPtr->next;
             deleteNode(&head, currentProcessPtr->previous);
+            Buffer = Buffer - 1;
           } else{
             struct node *tmp = currentProcessPtr;
             currentProcessPtr = currentProcessPtr->next;
             deleteNode(&head, tmp);
+            Buffer = Buffer - 1;
           }
         }
       }
